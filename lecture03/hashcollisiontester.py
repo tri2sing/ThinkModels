@@ -90,9 +90,10 @@ if __name__ == '__main__':
     print 'Mathematical probability of collision: ', collision_prob(1000, 200)
     print 'Simulation probability of collision: ', observe_prob(1000, 50, 1000)
     print 'Simulation probability of collision: ', observe_prob(1000, 200, 1000)
+
     # To check the probabilities that two people have the same birthday
     # Simplification: assume that there are 365 days in a year.
-    # Simplification: all birthdays are eqaually likely
+    # Simplification: all birthdays are equally likely
     # We can emulate it using hash collisions: 
     # Number of days = number of buckets = 365
     # Number of people = number of insertions 
