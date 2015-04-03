@@ -190,10 +190,29 @@ def simulationWithoutDrug(numViruses, maxPop, maxBirthProb, clearProb,
     numTrials: number of simulation runs to execute (an integer)
     """
 
-    # TODO
-
-
-
+    timeSteps = 300  # duration for each trial
+    # cumulative number of viruses for a step, after each trial, initially 0
+    cumStepPop = [0 for i in range(timeSteps)] 
+    
+    for j in range(numTrials):
+        # Create the initial number of viruses
+        viruses = [SimpleVirus(maxBirthProb, clearProb) for m in range(numViruses)]
+        # Create a patient
+        patient = Patient(viruses, maxPop)
+        stepPop = [patient.update() for n in range(timeSteps)]
+        addPop = [cumStepPop[s] + stepPop[s] for s in range(timeSteps)]
+        cumStepPop = addPop
+        #print 'Step DONE = ', j
+    avgPop = [cumStepPop[t] / numTrials for t in range(timeSteps)]
+    #print avgPop
+    pylab.plot([k for k in range (1, timeSteps + 1, 1)], avgPop, label="Virus Count")
+    pylab.title("Viruses after each time step")
+    pylab.xlabel("Time Step")
+    pylab.ylabel("Virus Count")
+    pylab.legend()
+    pylab.show()
+    
+        
 #
 # PROBLEM 4
 #
@@ -423,4 +442,5 @@ if __name__ == '__main__':
     patient = Patient([virus], 100)
     for i in range(100):
         population = patient.update()
-    print 'Number of child', patient.getTotalPop()
+    print 'Number of children', patient.getTotalPop()
+    simulationWithoutDrug(100, 1000, 0.1, 0.05, 100)
