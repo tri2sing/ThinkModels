@@ -204,7 +204,8 @@ def simulationWithoutDrug(numViruses, maxPop, maxBirthProb, clearProb,
         cumStepPop = addPop
         #print 'Step DONE = ', j
     avgPop = [cumStepPop[t] / numTrials for t in range(timeSteps)]
-    #print avgPop
+    print avgPop
+    print ''
     pylab.plot([k for k in range (1, timeSteps + 1, 1)], avgPop, label="Virus Count")
     pylab.title("Viruses after each time step")
     pylab.xlabel("Time Step")
@@ -443,4 +444,13 @@ if __name__ == '__main__':
     for i in range(100):
         population = patient.update()
     print 'Number of children', patient.getTotalPop()
-    simulationWithoutDrug(100, 1000, 0.1, 0.05, 100)
+    #simulationWithoutDrug(100, 1000, 0.1, 0.05, 100)
+
+
+    simulationWithoutDrug(1, 10, 1.0, 0.0, 1)
+
+    simulationWithoutDrug(100, 200, 0.2, 0.8, 1)
+
+
+    simulationWithoutDrug(1, 90, 0.8, 0.1, 1)
+
