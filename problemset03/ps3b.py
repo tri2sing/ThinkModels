@@ -328,7 +328,7 @@ class ResistantVirus(SimpleVirus):
         
         # Generate child resistances from parent based on probability
         childResists = {}
-        for resistKey, resistVal in self.resistances.itertems():
+        for resistKey, resistVal in self.resistances.iteritems():
             randVal = random.random()
             if randVal < self.mutProb: 
                 childResists[resistKey] = not resistVal
@@ -354,8 +354,8 @@ class TreatedPatient(Patient):
 
         maxPop: The  maximum virus population for this patient (an integer)
         """
-
-        # TODO
+        Patient.__init__(self, viruses, maxPop)
+        self.prescriptions = []
 
 
     def addPrescription(self, newDrug):
@@ -368,8 +368,8 @@ class TreatedPatient(Patient):
 
         postcondition: The list of drugs being administered to a patient is updated
         """
-
-        # TODO
+        if newDrug not in self.prescriptions:
+            self.prescriptions.append(newDrug)
 
 
     def getPrescriptions(self):
@@ -379,8 +379,7 @@ class TreatedPatient(Patient):
         returns: The list of drug names (strings) being administered to this
         patient.
         """
-
-        # TODO
+        return self.prescriptions
 
 
     def getResistPop(self, drugResist):
@@ -394,8 +393,11 @@ class TreatedPatient(Patient):
         returns: The population of viruses (an integer) with resistances to all
         drugs in the drugResist list.
         """
-
-        # TODO
+        count = 0
+        for virus in self.viruses:
+            if all([virus.isResistantTo(drug) for drug in drugResist]) is True:
+                count += 1
+        return count
 
 
     def update(self):
@@ -418,8 +420,25 @@ class TreatedPatient(Patient):
         returns: The total virus population at the end of the update (an
         integer)
         """
-
-        # TODO
+        if not self.viruses:
+            return 0
+        survivors = [virus for virus in self.viruses if virus.doesClear() == False]
+        if not survivors:
+            self.viruses = []
+            return 0
+        density = len(survivors)/float(self.maxPop)
+        children = []
+        for x in survivors:
+            try:
+                child = x.reproduce(density, self.prescriptions)
+                children.append(child)
+            except NoChildException:
+                pass
+        if not children:
+            self.viruses = survivors
+        else:
+            self.viruses = survivors + children
+        return len(self.viruses)
 
 
 
