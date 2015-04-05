@@ -315,6 +315,12 @@ class ResistantVirus(SimpleVirus):
         maxBirthProb and clearProb values as this virus. Raises a
         NoChildException if this virus particle does not reproduce.
         """
+        
+        # If the virus is not resistant to any drug and 
+        # the list of active drugs is not empty
+        if not self.resistances and activeDrugs:
+            raise NoChildException
+        
         # Determine if the virus is resistant to all active drugs
         for drug in activeDrugs:
             if not self.resistances[drug]:
@@ -393,9 +399,15 @@ class TreatedPatient(Patient):
         returns: The population of viruses (an integer) with resistances to all
         drugs in the drugResist list.
         """
+        
         count = 0
         for virus in self.viruses:
-            if all([virus.isResistantTo(drug) for drug in drugResist]) is True:
+            resistsAll = True
+            for drug in drugResist:
+                if not virus.isResistantTo(drug):
+                    resistsAll = False
+                    break
+            if resistsAll == True:
                 count += 1
         return count
 
@@ -468,22 +480,71 @@ def simulationWithDrug(numViruses, maxPop, maxBirthProb, clearProb, resistances,
     
     """
 
-    # TODO
-
-
+    timeSteps = 300  # duration for each trial
+    # cumulative number of viruses for a step, after each trial, initially 0
+    cumStepPop = [0 for i in range(timeSteps)] 
+    cumResistPop = [0 for i in range(timeSteps)]
+    
+    for j in range(numTrials):
+        # Create the initial number of viruses
+        viruses = [ResistantVirus(maxBirthProb, clearProb, resistances, mutProb) for m in range(numViruses)]
+        # Create a patient
+        patient = TreatedPatient(viruses, maxPop)
+        stepPop = []
+        resistPop = []
+        for step in range(timeSteps/2):
+            stepPop.append(patient.update())
+            resistPop.append(patient.getResistPop(['guttagonol']))
+        patient.addPrescription('guttagonol')
+        for step in range(timeSteps/2, timeSteps):
+            stepPop.append(patient.update())
+            resistPop.append(patient.getResistPop(['guttagonol']))
+        addPop = [cumStepPop[s] + stepPop[s] for s in range(timeSteps)]
+        cumStepPop = addPop
+        addPop = [cumResistPop[s] + resistPop[s] for s in range(timeSteps)]
+        cumResistPop = addPop
+        #print 'Step DONE = ', j
+    avgTotalPop = [float(cumStepPop[t]) / float(numTrials) for t in range(timeSteps)]
+    avgResistPop = [float(cumResistPop[t]) / float(numTrials) for t in range(timeSteps)]
+    #print len(avgTotalPop), avgTotalPop
+    #print len(avgResistPop), avgResistPop
+    #print ''
+    pylab.plot([k for k in range (1, timeSteps + 1, 1)], avgTotalPop, label="Total Count")
+    pylab.plot([k for k in range (1, timeSteps + 1, 1)], avgResistPop, label="Resist Count")
+    pylab.title("Viruses after each time step")
+    pylab.xlabel("Time Step")
+    pylab.ylabel("Virus Count")
+    pylab.legend()
+    pylab.show()
+  
+  
 if __name__ == '__main__':
+    print 'Started'
     random.seed(0)
     v1 = SimpleVirus(1.0, 0.0)
     #print 'v1.doesClear', v1.doesClear() # Expected answer is False
     #print 'v1.reproduce', v1.reproduce(0.25) # Expected answer is False
-    virus = SimpleVirus(1.0, 0.0)
-    patient = Patient([virus], 100)
-    for i in range(100):
-        population = patient.update()
-    print 'Number of children', patient.getTotalPop()
+    #virus = SimpleVirus(1.0, 0.0)
+    #patient = Patient([virus], 100)
+    #for i in range(100):
+    #    population = patient.update()
+    #print 'Number of children', patient.getTotalPop()
+    
     #simulationWithoutDrug(100, 1000, 0.1, 0.05, 100)
     #simulationWithoutDrug(1, 10, 1.0, 0.0, 1)
     #simulationWithoutDrug(100, 200, 0.2, 0.8, 1)
     #simulationWithoutDrug(1, 90, 0.8, 0.1, 1)
-    virus = ResistantVirus(0.0, 1.0, {"drug1":True, "drug2":False}, 0.0)
+
+    #virus = ResistantVirus(0.0, 1.0, {'guttagonol': True}, 0.0)
+    #print "Virus is resistant to guttagonol", virus.isResistantTo('guttagonol')
+    #patient = TreatedPatient([virus], 10)
+    #rpop = patient.getResistPop(['guttagonol'])
+    #print "Num resistant viruses in patient = ", rpop
+    
+    simulationWithDrug(1, 10, 1.0, 0.0, {}, 1.0, 5)
+    simulationWithDrug(1, 20, 1.0, 0.0, {'guttagonol': True}, 1.0, 5)
+    simulationWithDrug(75, 100, .8, 0.1, {'guttagonol': True}, 0.8, 1)
+    #simulationWithDrug(100, 1000, 0.1, 0.05, {'guttagonol': False}, 0.005, 100)
+    print 'Completed'
+    
     
