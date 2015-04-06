@@ -143,7 +143,7 @@ class Simulator(object):
             print
         
     def runVectors(self, drunk, numTrias):
-        for numSteps in [0, 1, 10, 100, 1000, 1000]:
+        for numSteps in [10000]:
             vectors = self.manyVectors(drunk, numSteps, numTrias)
         return vectors
             
@@ -159,7 +159,7 @@ if __name__ == '__main__':
         pylab.ylim(-100, 100)
         pylab.show()
         
-        drunk = EDrunk('DDrunk')
+        drunk = DDrunk('DDrunk')
         vectors = sim.runVectors(drunk, numTrials)
         pylab.title(str(drunk))
         pylab.scatter(*zip(*vectors))
@@ -175,7 +175,7 @@ if __name__ == '__main__':
         pylab.ylim(-100, 100)
         pylab.show()
         
-        drunk = EDrunk('PhotoDrunk')
+        drunk = PhotoDrunk('PhotoDrunk')
         vectors = sim.runVectors(drunk, numTrials)
         pylab.title(str(drunk))
         pylab.scatter(*zip(*vectors))
@@ -183,7 +183,7 @@ if __name__ == '__main__':
         pylab.ylim(-100, 100)
         pylab.show()
 
-        drunk = EDrunk('UsualDrunk')
+        drunk = UsualDrunk('UsualDrunk')
         vectors = sim.runVectors(drunk, numTrials)
         pylab.title(str(drunk))
         pylab.scatter(*zip(*vectors))
