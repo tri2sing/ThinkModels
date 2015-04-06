@@ -148,14 +148,49 @@ class Simulator(object):
         return vectors
             
 if __name__ == '__main__':
-        numTrials = 100
+        numTrials = 1000
         sim = Simulator()
+
         drunk = ColdDrunk('ColdDrunk')
         vectors = sim.runVectors(drunk, numTrials)
         pylab.title(str(drunk))
         pylab.scatter(*zip(*vectors))
+        pylab.xlim(-100, 100)
+        pylab.ylim(-100, 100)
         pylab.show()
         
+        drunk = EDrunk('DDrunk')
+        vectors = sim.runVectors(drunk, numTrials)
+        pylab.title(str(drunk))
+        pylab.scatter(*zip(*vectors))
+        pylab.xlim(-100, 100)
+        pylab.ylim(-100, 100)
+        pylab.show()
+
+        drunk = EDrunk('EDrunk')
+        vectors = sim.runVectors(drunk, numTrials)
+        pylab.title(str(drunk))
+        pylab.scatter(*zip(*vectors))
+        pylab.xlim(-100, 100)
+        pylab.ylim(-100, 100)
+        pylab.show()
+        
+        drunk = EDrunk('PhotoDrunk')
+        vectors = sim.runVectors(drunk, numTrials)
+        pylab.title(str(drunk))
+        pylab.scatter(*zip(*vectors))
+        pylab.xlim(-100, 100)
+        pylab.ylim(-100, 100)
+        pylab.show()
+
+        drunk = EDrunk('UsualDrunk')
+        vectors = sim.runVectors(drunk, numTrials)
+        pylab.title(str(drunk))
+        pylab.scatter(*zip(*vectors))
+        pylab.xlim(-100, 100)
+        pylab.ylim(-100, 100)
+        pylab.show()
+
         
         
 
