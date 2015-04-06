@@ -143,10 +143,19 @@ class Simulator(object):
             print
         
     def runVectors(self, drunk, numTrias):
-        for numSteps in [0, 1, 10, 100, 1000, 10000]:
+        for numSteps in [0, 1, 10, 100, 1000, 1000]:
             vectors = self.manyVectors(drunk, numSteps, numTrias)
-        
+        return vectors
             
 if __name__ == '__main__':
-    sim = Simulator()
+        numTrials = 100
+        sim = Simulator()
+        drunk = ColdDrunk('ColdDrunk')
+        vectors = sim.runVectors(drunk, numTrials)
+        pylab.title(str(drunk))
+        pylab.scatter(*zip(*vectors))
+        pylab.show()
+        
+        
+        
 
