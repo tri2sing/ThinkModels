@@ -113,38 +113,38 @@ class Simulator(object):
         return(field.getLoc(drunk).getX() - start.getX(),
                field.getLoc(drunk).getY() - start.getY())
 
-    def manyWalks(self, drunk, numSteps, numTrias):
+    def manyWalks(self, drunk, numSteps, numTrials):
         origin = Location(0, 0)
         distances = []
-        for i in range(numTrias):
+        for i in range(numTrials):
             field = Field()
             field.addDrunk(drunk, origin)
             distance = self.oneWalk(field, drunk, numSteps)
             distances.append(distance)
         return distances
 
-    def manyVectors(self, drunk, numSteps, numTrias):
+    def manyVectors(self, drunk, numSteps, numTrials):
         origin = Location(0, 0)
         vectors = []
-        for i in range(numTrias):
+        for i in range(numTrials):
             field = Field()
             field.addDrunk(drunk, origin)
             vector = self.oneVector(field, drunk, numSteps)
             vectors.append(vector)
         return vectors
         
-    def runWalks(self, drunk, numTrias):
+    def runWalks(self, drunk, numTrials):
         for numSteps in [0, 1, 10, 100, 1000, 10000]:
-            distances = self.manyWalks(drunk, numSteps, numTrias)
+            distances = self.manyWalks(drunk, numSteps, numTrials)
             print 'Random walk of steps = ' + str(numSteps)
             print 'Average distance = ', str(sum(distances)/len(distances))
             print 'Max distance = ', str(max(distances))
             print 'Min distance = ', str(min(distances))
             print
         
-    def runVectors(self, drunk, numTrias):
-        for numSteps in [10000]:
-            vectors = self.manyVectors(drunk, numSteps, numTrias)
+    def runVectors(self, drunk, numTrials):
+        numSteps = 1000
+        vectors = self.manyVectors(drunk, numSteps, numTrials)
         return vectors
             
 if __name__ == '__main__':
