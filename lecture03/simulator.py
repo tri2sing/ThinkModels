@@ -24,7 +24,7 @@ class Simulator(object):
             if result == target:
                 return numTries
     
-    def run_simulation(self, sides, target, numTrials):  
+    def runSimulation(self, sides, target, numTrials):  
         totalTries = 0
         for i in range(numTrials):
             totalTries += self.num_tries_to_get_target(sides, target)
@@ -33,5 +33,5 @@ class Simulator(object):
 if __name__ == '__main__':
     simu = Simulator()
     sides = 6
-    simu.run_simulation(sides, '11111', 100)
-    simu.run_simulation(sides, '12345', 100)           
+    simu.runSimulation(sides, '11111', 100)
+    simu.runSimulation(sides, '12345', 100)           
