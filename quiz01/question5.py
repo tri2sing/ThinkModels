@@ -4,6 +4,7 @@ Created on Apr 6, 2015
 @author: Sameer Adhikari
 '''
 
+import pylab
 import random
 
 def generateScores(numTrials):
@@ -40,7 +41,18 @@ def sampleQuizzes():
     subset = [score for score in scores if score >= lowerBound and score <= upperBound]
 
     return len(subset)/float(len(scores))
+
+
+def plotQuizzes():
+    scores = generateScores(10000)
+    pylab.title('Distribution of Scores')
+    pylab.xlabel('Final Score')
+    pylab.ylabel('Number of Trials')
+    pylab.hist(scores, 7)
+    pylab.show()
     
     
 if __name__ == '__main__':
     print 'Probability = ', sampleQuizzes()
+    plotQuizzes()
+
