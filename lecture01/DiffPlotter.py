@@ -47,7 +47,7 @@ class Plotter(object):
             
 
 if __name__ == '__main__':
-    plotter = Plotter('C:\\Users\\sadhikar\\Documents\\workspacepython\\ThinkComputationModels\\Inputs\\JulyTemps.txt')
+    plotter = Plotter('C:\\Users\\sadhikar\\Documents\\workspacepython\\ThinkModels\\Inputs\\JulyTemps.txt')
     plotter.process_data()
     plotter.print_data()
     plotter.plot_diffs()

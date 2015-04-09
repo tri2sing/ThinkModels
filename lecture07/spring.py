@@ -43,8 +43,15 @@ def testErrors(ntrials=10000,npts=100):
 
 #testErrors()
 #testErrors(ntrials=100000)
-pylab.show()
+#pylab.show()
 
+def rSquare(measured, estimated):
+    """measured: one dimensional array of measured values
+       estimate: one dimensional array of predicted values"""
+    SEE = ((estimated - measured)**2).sum()
+    mMean = measured.sum()/float(len(measured))
+    MV = ((mMean - measured)**2).sum()
+    return 1 - SEE/MV
 
 def fitData(fileName):
     xVals, yVals = getData(fileName)
@@ -62,9 +69,11 @@ def fitData(fileName):
     pylab.plot(xVals, estYVals, label = 'Linear fit, k = '
                + str(round(k, 5)))
     pylab.legend(loc = 'best')
+    print 'fitData R-Squared = ', rSquare(yVals, estYVals)
 
 ##fitData('springData.txt')
-##pylab.show()
+fitData('C:\\Users\\sadhikar\\Documents\\workspacepython\\ThinkModels\\Inputs\\SpringData.txt')
+pylab.show()
 
 def fitData1(fileName):
     xVals, yVals = getData(fileName)
@@ -124,9 +133,11 @@ def fitData3(fileName):
     pylab.plot(xVals, estYVals, label = 'Linear fit, k = '
                + str(round(k, 5)))
     pylab.legend(loc = 'best')
+    print 'fitData3 R-Squared = ', rSquare(yVals, estYVals)
 
 ##fitData3('springData.txt')
-##pylab.show()
+fitData3('C:\\Users\\sadhikar\\Documents\\workspacepython\\ThinkModels\\Inputs\\SpringData.txt')
+pylab.show()
 
 def getTrajectoryData(fileName):
     dataFile = open(fileName, 'r')
@@ -166,14 +177,6 @@ def tryFits(fName):
 
 ##tryFits('launcherData.txt')
 ##pylab.show()
-
-def rSquare(measured, estimated):
-    """measured: one dimensional array of measured values
-       estimate: one dimensional array of predicted values"""
-    SEE = ((estimated - measured)**2).sum()
-    mMean = measured.sum()/float(len(measured))
-    MV = ((mMean - measured)**2).sum()
-    return 1 - SEE/MV
 
 def tryFits1(fName):
     distances, heights = getTrajectoryData(fName)
