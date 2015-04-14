@@ -4,12 +4,36 @@ import numpy
 import random
 import pylab
 from ps3c import *
-#from problemset03.ps3b import *
+# from problemset03.ps3b import *
 
 def singleTrial(numViruses=100, maxPop=1000, maxBirthProb=0.1, clearProb=0.05,
                 mutProb=0.005, stepsBeforeDrug=0, stepsAfterDrug=150):
     '''
     '''
+    resistances = {'guttagonol': False}
+    totalViruses = 0 
+    viruses = [ResistantVirus(maxBirthProb, clearProb, resistances, mutProb) for m in range(numViruses)]
+    patient = TreatedPatient(viruses, maxPop)
+    for step in range(stepsBeforeDrug):
+        totalViruses = patient.update()
+    patient.addPrescription('guttagonol')
+    for step in range(stepsBeforeDrug, stepsBeforeDrug + stepsAfterDrug):
+        totalViruses = patient.update()
+    return totalViruses
+
+
+def singleTrialKWArgs(**kwargs):
+    '''
+    numViruses=100, maxPop=1000, maxBirthProb=0.1, clearProb=0.05, mutProb=0.005, stepsBeforeDrug=0, stepsAfterDrug=150
+    '''
+    numViruses = kwargs['numViruses'] if 'numViruses' in kwargs else 100
+    maxPop = kwargs['maxPop'] if 'maxPop' in kwargs else 1000
+    maxBirthProb = kwargs['maxBirthProb'] if 'maxBirthProb' in kwargs else 0.1
+    clearProb = kwargs['clearProb'] if 'clearProb' in kwargs else 0.5
+    mutProb = kwargs['mutProb'] if 'mutProb' in kwargs else 0.05
+    stepsBeforeDrug = kwargs['stepsBeforeDrug'] if 'stepsBeforeDrug' in kwargs else 0
+    stepsAfterDrug = kwargs['stepsAfterDrug'] if 'stepsAfterDrug' in kwargs else 150
+    
     resistances = {'guttagonol': False}
     totalViruses = 0 
     viruses = [ResistantVirus(maxBirthProb, clearProb, resistances, mutProb) for m in range(numViruses)]
@@ -52,7 +76,7 @@ def simulationDelayedTreatment(numTrials):
     pylab.show()   
 
 
-#simulationDelayedTreatment(250)
+# simulationDelayedTreatment(250)
 
 def simulationVirusListLength(numTrials):
     """
@@ -80,7 +104,7 @@ def simulationVirusListLength(numTrials):
         pylab.hist(totals, 11)
     pylab.show()   
 
-#simulationVirusListLength(250)
+# simulationVirusListLength(250)
 
 def simulationMaxPopCount(numTrials):
     """
@@ -108,7 +132,7 @@ def simulationMaxPopCount(numTrials):
         pylab.hist(totals, 11)
     pylab.show()   
 
-#simulationMaxPopCount(125)
+# simulationMaxPopCount(125)
 
 def simulationMaxBirthProb(numTrials):
     """
@@ -136,7 +160,7 @@ def simulationMaxBirthProb(numTrials):
         pylab.hist(totals, 11)
     pylab.show()   
 
-#simulationMaxBirthProb(100)
+# simulationMaxBirthProb(100)
 
 def simulationClearProb(numTrials):
     """
@@ -164,9 +188,38 @@ def simulationClearProb(numTrials):
         pylab.hist(totals, 11)
     pylab.show()   
 
-simulationClearProb(100)
+# simulationClearProb(100)
 
 
+def simulationGivenFactor(numTrials=0, stepsBeforeDrug=150, factorName='', factorValues=[]):
+    '''
+    '''
+    print 'numTrials = ', numTrials
+    print 'stepsBeforeDrugs = ', stepsBeforeDrug
+    print 'factorName = ', factorName
+    print 'factorValues = ', factorValues
+    
+    pylab.figure()
+    numValues = len(factorValues)
+    for k in range(numValues):
+        totals = [0] * numTrials
+        for i in range(numTrials):
+            args = {}
+            args[str(factorName)] = factorValues[k]
+            args['stepsBeforeDrug'] = stepsBeforeDrug
+            totals[i] = singleTrial(**args)
+        print 'Done with'  + factorName + ' = ' + str(factorValues[k])
+        pylab.subplot(numValues / 2, numValues - (numValues / 2), k + 1)
+        pylab.title(factorName + ' = ' + str(factorValues[k]))
+        pylab.ylabel('Number of Trials')
+        pylab.hist(totals, 11)
+    pylab.show()   
+    
+
+simulationGivenFactor(numTrials=10, stepsBeforeDrug=150, factorName='numViruses', factorValues=[50, 100, 150, 200])
+simulationGivenFactor(numTrials=10, stepsBeforeDrug=150, factorName='maxPop', factorValues=[1000, 1500, 2000, 2500])
+simulationGivenFactor(numTrials=10, stepsBeforeDrug=150, factorName='maxBirthProb', factorValues=[0.1, 0.2, 0.3, 0.4])
+simulationGivenFactor(numTrials=10, stepsBeforeDrug=150, factorName='clearProb', factorValues=[0.05, 0.1, 0.15, 0.2])
 
 #
 # PROBLEM 2
