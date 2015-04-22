@@ -42,15 +42,24 @@ class WeightedEdge(Edge):
         self.totalDistance = totalDistance
         self.outdoorDistance = outdoorDistance
         super(WeightedEdge, self).__init__(src, dest)
+    def getTotalDistance(self):
+        return self.totalDistance
+    def getOutdoorDistance(self):
+        return self.outdoorDistance
     def __str__(self):
         return '{0} ({1}, {2})'.format(super(WeightedEdge, self).__str__(), str(self.totalDistance), str(self.outdoorDistance))
         
-ns = Node('Src')    
-nd = Node('Dst')
-we = WeightedEdge(ns, nd, 15, 10)
-print we.getSource(), we.getDestination()
-print we
-
+na = Node('a')
+nb = Node('b')
+nc = Node('c')
+e1 = WeightedEdge(na, nb, 15, 10)
+print e1
+print e1.getTotalDistance()
+print e1.getOutdoorDistance()
+e2 = WeightedEdge(na, nc, 14, 6)
+e3 = WeightedEdge(nb, nc, 3, 1)
+print e2
+print e3
     
 class Digraph(object):
     """
