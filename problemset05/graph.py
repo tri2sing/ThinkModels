@@ -33,6 +33,25 @@ class Edge(object):
     def __str__(self):
         return '{0}->{1}'.format(self.src, self.dest)
 
+# Problem 1 from set 05
+class WeightedEdge(Edge):
+    '''
+    Edge that has two weights associated with it.
+    '''
+    def __init__(self, src, dest, totalDistance, outdoorDistance):
+        self.totalDistance = totalDistance
+        self.outdoorDistance = outdoorDistance
+        super(WeightedEdge, self).__init__(src, dest)
+    def __str__(self):
+        return '{0} ({1}, {2})'.format(super(WeightedEdge, self).__str__(), str(self.totalDistance), str(self.outdoorDistance))
+        
+ns = Node('Src')    
+nd = Node('Dst')
+we = WeightedEdge(ns, nd, 15, 10)
+print we.getSource(), we.getDestination()
+print we
+
+    
 class Digraph(object):
     """
     A directed graph
