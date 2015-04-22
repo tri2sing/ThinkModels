@@ -37,7 +37,33 @@ def load_map(mapFilename):
     """
     # TODO
     print "Loading map from file..."
-        
+    result = WeightedDigraph()
+    with open(mapFilename) as f:
+        lines = f.readlines()
+    for line in lines:
+        srcName, destName, totalDist, outsideDist = line.strip().split()
+        srcNode = Node(str(srcName))
+        destNode = Node(str(destName))
+        if not result.hasNode(srcNode):
+            result.addNode(srcNode)
+        if not result.hasNode(destNode):
+            result.addNode(destNode)
+        edge = WeightedEdge(srcNode, destNode, float(totalDist), float(outsideDist))
+        result.addEdge(edge)
+    return result
+
+
+mitMap = load_map('./mit_map.txt')        
+# Problem 2-1
+print isinstance(mitMap, Digraph)
+# Problem 2-1
+print isinstance(mitMap, WeightedDigraph)
+# Problem 2-2
+nodes = mitMap.nodes
+print nodes
+# Problem 2-3
+edges = mitMap.edges
+print edges
 
 #
 # Problem 3: Finding the Shortest Path using Brute Force Search

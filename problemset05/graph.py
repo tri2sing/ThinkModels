@@ -141,8 +141,8 @@ def test():
     print g
     print g.childrenOf(na)    
     
-   
-test() 
+if __name__ == '__main__':   
+    test() 
     
     
     
