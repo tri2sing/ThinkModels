@@ -49,17 +49,6 @@ class WeightedEdge(Edge):
     def __str__(self):
         return '{0} ({1}, {2})'.format(super(WeightedEdge, self).__str__(), str(self.totalDistance), str(self.outdoorDistance))
         
-na = Node('a')
-nb = Node('b')
-nc = Node('c')
-e1 = WeightedEdge(na, nb, 15, 10)
-print e1
-print e1.getTotalDistance()
-print e1.getOutdoorDistance()
-e2 = WeightedEdge(na, nc, 14, 6)
-e3 = WeightedEdge(nb, nc, 3, 1)
-print e2
-print e3
     
 class Digraph(object):
     """
@@ -96,3 +85,64 @@ class Digraph(object):
             for d in self.edges[str(k)]:
                 res = '{0}{1}->{2}\n'.format(res, k, d)
         return res[:-1]
+
+# Problem 1 from set 05
+class WeightedDigraph(Digraph):
+    '''
+    A diagraph which handles weighted edges
+    '''
+    def __init__(self):
+        super(WeightedDigraph, self).__init__()
+    def addEdge(self, edge):
+        '''
+        Adds two weights for each edge
+        '''
+        src = edge.getSource()
+        dest = edge.getDestination()
+        if not(src in self.nodes and dest in self.nodes):
+            raise ValueError('Node not in graph')
+        self.edges[src].append([dest, (float(edge.getTotalDistance()), float(edge.getOutdoorDistance()))])
+    def childrenOf(self, node):
+        '''
+        Returns only the children and not the weights
+        '''
+        return [child[0] for child in self.edges[node]]
+    def __str__(self):
+        '''
+        Returns the weights along with the the soure and destination pairs
+        '''
+        res = ''
+        for k in self.edges:
+            for d in self.edges[k]:
+                res = '{0}{1}->{2} {3}\n'.format(res, k, d[0], d[1])
+        return res[:-1]
+        
+
+def test():
+    na = Node('a')
+    nb = Node('b')
+    nc = Node('c')
+    e1 = WeightedEdge(na, nb, 15, 10)
+    print e1
+    print e1.getTotalDistance()
+    print e1.getOutdoorDistance()
+    e2 = WeightedEdge(na, nc, 14, 6)
+    e3 = WeightedEdge(nb, nc, 3, 1)
+    print e2
+    print e3
+    
+    g = WeightedDigraph()
+    g.addNode(na)
+    g.addNode(nb)
+    g.addNode(nc)
+    g.addEdge(e1)
+    g.addEdge(e2)
+    g.addEdge(e3)
+    print g
+    print g.childrenOf(na)    
+    
+   
+test() 
+    
+    
+    
