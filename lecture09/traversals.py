@@ -34,7 +34,7 @@ def DFSAllPaths(graph, start, end, path = []):
             # if child returns paths, return them to the caller
             for newPath in newPaths:
                 allPaths.append(newPath)
-    return allPaths # if no path exists
+    return allPaths # if no path exists, this is an empty list
 
 def DFSShortest(graph, start, end, path = [], shortest = None):
     #assumes graph is a Digraph

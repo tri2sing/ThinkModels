@@ -93,6 +93,7 @@ class WeightedDigraph(Digraph):
     '''
     def __init__(self):
         super(WeightedDigraph, self).__init__()
+        self.weights = {}
     def addEdge(self, edge):
         '''
         Adds two weights for each edge
@@ -102,11 +103,59 @@ class WeightedDigraph(Digraph):
         if not(src in self.nodes and dest in self.nodes):
             raise ValueError('Node not in graph')
         self.edges[src].append([dest, (float(edge.getTotalDistance()), float(edge.getOutdoorDistance()))])
+        self.weights[src, dest] = float(edge.getTotalDistance()), float(edge.getOutdoorDistance())
+        
     def childrenOf(self, node):
         '''
         Returns only the children and not the weights
         '''
         return [child[0] for child in self.edges[node]]
+
+    def getEdgeWeights(self, src, dest):
+        if not(src in self.nodes and dest in self.nodes):
+            raise ValueError('Node not in graph')
+        if not (src, dest) in self.weights:
+            raise ValueError('(src, dest) weights not stored')
+        return self.weights[src, dest]
+        
+    def getPathWeights(self, path):
+        '''
+        Finds the sum of the total and outside weights of the edges along the path
+        
+        Parameters:
+            path: the list of nodes from source to destination
+        
+        Assumes:
+            path contains nodes in the correct sequence of edges
+    
+        Returns:
+            The sum of the total and outside weights
+        '''
+        pathTotal = 0.0
+        pathOutside = 0.0
+        for i in range(len(path) - 1):
+            # We call the function rather than access the dict for weights
+            # because we can to take advantage of the error checking
+            edgeTotal, edgeOutSide = self.getEdgeWeights(path[i], path[i+1])
+            pathTotal = pathTotal + edgeTotal
+            pathOutside = pathOutside + edgeOutSide
+        return pathTotal, pathOutside
+        
+    def DFSAllPaths(self, start, end, path = []):
+        #assumes graph is a Digraph
+        #assumes start and end are nodes in graph
+        path = path + [start]
+        if start == end:
+            return [path] # recursion stop when you reach destination
+        allPaths = []
+        for node in self.childrenOf(start):
+            if node not in path: #avoid cycles
+                newPaths = self.DFSAllPaths(self,node,end,path)
+                # if child returns paths, return them to the caller
+                for newPath in newPaths:
+                    allPaths.append(newPath)
+        return allPaths # if no path exists, this is an empty list
+
     def __str__(self):
         '''
         Returns the weights along with the the soure and destination pairs
@@ -140,6 +189,8 @@ def test():
     g.addEdge(e3)
     print g
     print g.childrenOf(na)    
+    print g.weights
+    print 'na, nb = ', g.getEdgeWeights(na, nb)
     
 if __name__ == '__main__':   
     test() 

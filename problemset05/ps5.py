@@ -53,17 +53,30 @@ def load_map(mapFilename):
     return result
 
 
-mitMap = load_map('./mit_map.txt')        
+#mitMap = load_map('./mit_map.txt')        
 # Problem 2-1
-print isinstance(mitMap, Digraph)
+#print isinstance(mitMap, Digraph)
 # Problem 2-1
-print isinstance(mitMap, WeightedDigraph)
+#print isinstance(mitMap, WeightedDigraph)
 # Problem 2-2
-nodes = mitMap.nodes
-print nodes
+#nodes = mitMap.nodes
+#print nodes
 # Problem 2-3
-edges = mitMap.edges
-print edges
+#edges = mitMap.edges
+#print edges
+
+
+def printPath(path):
+    # a path is a list of nodes
+    result = ''
+    for i in range(len(path)):
+        if i == len(path) - 1:
+            result = result + str(path[i])
+        else:
+            result = result + str(path[i]) + '->'
+    return result
+
+    
 
 #
 # Problem 3: Finding the Shortest Path using Brute Force Search
@@ -97,7 +110,16 @@ def bruteForceSearch(digraph, start, end, maxTotalDist, maxDistOutdoors):
         maxDistOutdoors constraints, then raises a ValueError.
     """
     #TODO
-    pass
+    allPaths = digraph.DFSAllPaths(start, end)
+    result = None
+    for path in allPaths:
+        pathTotal, pathOutside = digraph.getPathWeights(path)
+        if pathTotal <= maxTotalDist and pathOutside <= maxDistOutdoors:
+            result.append(path)
+    if not result:
+        raise ValueError('No path')
+    else:
+        return result[0]
 
 #
 # Problem 4: Finding the Shorest Path using Optimized Search Method
@@ -132,13 +154,13 @@ def directedDFS(digraph, start, end, maxTotalDist, maxDistOutdoors):
 
 # Uncomment below when ready to test
 #### NOTE! These tests may take a few minutes to run!! ####
-# if __name__ == '__main__':
-#     Test cases
-#     mitMap = load_map("mit_map.txt")
-#     print isinstance(mitMap, Digraph)
-#     print isinstance(mitMap, WeightedDigraph)
-#     print 'nodes', mitMap.nodes
-#     print 'edges', mitMap.edges
+if __name__ == '__main__':
+    #Test cases
+    mitMap = load_map("mit_map.txt")
+    print isinstance(mitMap, Digraph)
+    print isinstance(mitMap, WeightedDigraph)
+    print 'nodes', mitMap.nodes
+    print 'edges', mitMap.edges
 
 
 #     LARGE_DIST = 1000000
