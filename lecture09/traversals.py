@@ -6,25 +6,41 @@ Created on Apr 21, 2015
 
 from lecture09.graph import *
 
-def DFS(graph, start, end, path = [], shortest = None):
+def DFS(graph, start, end, path = []):
     #assumes graph is a Digraph
     #assumes start and end are nodes in graph
     path = path + [start]
-    print 'Current dfs path:', printPath(path)
+    #print 'Current dfs path:', printPath(path)
     if start == end:
-        return path
+        return path # recursion stop when you reach destination
     for node in graph.childrenOf(start):
         if node not in path: #avoid cycles
-            newPath = DFS(graph,node,end,path,shortest)
+            newPath = DFS(graph,node,end,path)
             if newPath != None:
-                return newPath
+                return newPath # if child returned a path, return it to caller
+    return None # if no path exists
 
+def DFSAllPaths(graph, start, end, path = []):
+    #assumes graph is a Digraph
+    #assumes start and end are nodes in graph
+    path = path + [start]
+    #print 'Current dfs path:', printPath(path)
+    if start == end:
+        return [path] # recursion stop when you reach destination
+    allPaths = []
+    for node in graph.childrenOf(start):
+        if node not in path: #avoid cycles
+            newPaths = DFSAllPaths(graph,node,end,path)
+            # if child returns paths, return them to the caller
+            for newPath in newPaths:
+                allPaths.append(newPath)
+    return allPaths # if no path exists
 
 def DFSShortest(graph, start, end, path = [], shortest = None):
     #assumes graph is a Digraph
     #assumes start and end are nodes in graph
     path = path + [start]
-    print 'Current dfs path:', printPath(path)
+    print 'Current shortest dfs path:', printPath(path)
     if start == end:
         return path
     for node in graph.childrenOf(start):
@@ -70,14 +86,18 @@ def test():
     pathDFS = DFS(g, nodes[0], nodes[5])
     print 'Path found by DFS:', printPath(pathDFS)
     print
-    shortest = DFSShortest(g, nodes[0], nodes[5])
-    print 'Path found by DFS shortest:', printPath(shortest)
-    print
-    pathBFS = BFS(g, nodes[0], nodes[5])
-    print 'Path found by BFS:', printPath(pathBFS)
+    allPaths = DFSAllPaths(g, nodes[0], nodes[5])
+    for path in allPaths:
+        print 'Path found by DFS All Paths:', printPath(path)
+#     shortest = DFSShortest(g, nodes[0], nodes[5])
+#     print 'Path found by DFS shortest:', printPath(shortest)
+#     print
+#     pathBFS = BFS(g, nodes[0], nodes[5])
+#     print 'Path found by BFS:', printPath(pathBFS)
 
     
-test()
+if __name__ == '__main__':   
+    test() 
 
 
     
