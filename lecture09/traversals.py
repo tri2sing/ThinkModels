@@ -40,7 +40,7 @@ def DFSShortest(graph, start, end, path = [], shortest = None):
     #assumes graph is a Digraph
     #assumes start and end are nodes in graph
     path = path + [start]
-    print 'Current shortest dfs path:', printPath(path)
+    #print 'Current shortest dfs path:', printPath(path)
     if start == end:
         return path
     for node in graph.childrenOf(start):
@@ -89,9 +89,10 @@ def test():
     allPaths = DFSAllPaths(g, nodes[0], nodes[5])
     for path in allPaths:
         print 'Path found by DFS All Paths:', printPath(path)
-#     shortest = DFSShortest(g, nodes[0], nodes[5])
-#     print 'Path found by DFS shortest:', printPath(shortest)
-#     print
+    print
+    shortest = DFSShortest(g, nodes[0], nodes[5])
+    print 'Path found by DFS shortest:', printPath(shortest)
+    print
 #     pathBFS = BFS(g, nodes[0], nodes[5])
 #     print 'Path found by BFS:', printPath(pathBFS)
 

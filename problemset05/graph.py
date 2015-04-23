@@ -131,7 +131,7 @@ class WeightedDigraph(Digraph):
             path contains nodes in the correct sequence of edges
     
         Returns:
-            The sum of the total and outside weights
+            The sum of the total and sum of outside weights as a tuple.
         '''
         pathTotal = 0.0
         pathOutside = 0.0
@@ -158,6 +158,28 @@ class WeightedDigraph(Digraph):
                     allPaths.append(newPath)
         return allPaths  # if no path exists, this is an empty list
 
+    def DFSShortestDirected(self, start, end, maxTotalDist, maxDistOutdoors, path = [], shortest = None):
+        #assumes graph is a Digraph
+        #assumes start and end are nodes in graph
+        path = path + [start]
+        #print 'Current path', path
+        # If the path has one node, the weights we get back are (0.0, 0.0)
+        pathTotal, pathOutside = self.getPathWeights(path)
+        #print 'maxTotalDist = ', maxTotalDist, ', maxDistOutdoors = ', maxDistOutdoors, ', pathTotal = ', pathTotal, ', = pathOutside', pathOutside
+        if pathTotal > maxTotalDist:
+            return None
+        if pathOutside > maxDistOutdoors:
+            return None
+        if start == end:
+            return path
+        for node in self.childrenOf(start):
+            if node not in path: #avoid cycles
+                if shortest == None or pathTotal < self.getPathWeights(shortest)[0]:
+                    newPath = self.DFSShortestDirected(node, end, maxTotalDist, maxDistOutdoors, path,shortest)
+                    if newPath != None:
+                        shortest = newPath
+        return shortest
+
     def __str__(self):
         '''
         Returns the weights along with the the soure and destination pairs
@@ -177,8 +199,8 @@ def test():
     print e1
     print e1.getTotalDistance()
     print e1.getOutdoorDistance()
-    e2 = WeightedEdge(na, nc, 14, 6)
-    e3 = WeightedEdge(nb, nc, 3, 1)
+    e2 = WeightedEdge(na, nc, 14, 30)
+    e3 = WeightedEdge(nb, nc, 3, 5)
     print e2
     print e3
     
@@ -193,7 +215,12 @@ def test():
     print g.childrenOf(na)    
     print g.weights
     print 'na, nb = ', g.getEdgeWeights(na, nb)
-    print g.DFSAllPaths(na, nc)
+    print 'All paths = ', g.DFSAllPaths(na, nc)
+    print
+    print g.DFSShortestDirected(na, nc, 1000.0, 1000.0)
+    print
+    print g.DFSShortestDirected(na, nc, 1000.0, 20.0)
+    print
     
 if __name__ == '__main__':   
     test() 
