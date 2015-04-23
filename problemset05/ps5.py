@@ -3,7 +3,6 @@
 # Finding shortest paths through MIT buildings
 #
 
-import string
 # This imports everything from `graph.py` as if it was defined in this file!
 from graph import * 
 
@@ -53,17 +52,17 @@ def load_map(mapFilename):
     return result
 
 
-#mitMap = load_map('./mit_map.txt')        
+# mitMap = load_map('./mit_map.txt')        
 # Problem 2-1
-#print isinstance(mitMap, Digraph)
+# print isinstance(mitMap, Digraph)
 # Problem 2-1
-#print isinstance(mitMap, WeightedDigraph)
+# print isinstance(mitMap, WeightedDigraph)
 # Problem 2-2
-#nodes = mitMap.nodes
-#print nodes
+# nodes = mitMap.nodes
+# print nodes
 # Problem 2-3
-#edges = mitMap.edges
-#print edges
+# edges = mitMap.edges
+# print edges
 
 
 def printPath(path):
@@ -87,39 +86,46 @@ def printPath(path):
 
 def bruteForceSearch(digraph, start, end, maxTotalDist, maxDistOutdoors):    
     """
-    Finds the shortest path from start to end using brute-force approach.
-    The total distance travelled on the path must not exceed maxTotalDist, and
-    the distance spent outdoor on this path must not exceed maxDistOutdoors.
+    Finds the shortest current from start to end using brute-force approach.
+    The total distance travelled on the current must not exceed maxTotalDist, and
+    the distance spent outdoor on this current must not exceed maxDistOutdoors.
 
     Parameters: 
         digraph: instance of class Digraph or its subclass
         start, end: start & end building numbers (strings)
-        maxTotalDist : maximum total distance on a path (integer)
-        maxDistOutdoors: maximum distance spent outdoors on a path (integer)
+        maxTotalDist : maximum total distance on a current (integer)
+        maxDistOutdoors: maximum distance spent outdoors on a current (integer)
 
     Assumes:
         start and end are numbers for existing buildings in graph
 
     Returns:
-        The shortest-path from start to end, represented by 
+        The shortest-current from start to end, represented by 
         a list of building numbers (in strings), [n_1, n_2, ..., n_k], 
         where there exists an edge from n_i to n_(i+1) in digraph, 
         for all 1 <= i < k.
 
-        If there exists no path that satisfies maxTotalDist and
+        If there exists no current that satisfies maxTotalDist and
         maxDistOutdoors constraints, then raises a ValueError.
     """
-    #TODO
-    allPaths = digraph.DFSAllPaths(start, end)
-    result = None
-    for path in allPaths:
-        pathTotal, pathOutside = digraph.getPathWeights(path)
-        if pathTotal <= maxTotalDist and pathOutside <= maxDistOutdoors:
-            result.append(path)
-    if not result:
-        raise ValueError('No path')
-    else:
-        return result[0]
+    # TODO
+    allPaths = digraph.DFSAllPaths(Node(start), Node(end))
+    if not allPaths:
+        raise ValueError('No paths found between source and destination')
+    belowMaxTot = [path for path in allPaths if digraph.getPathWeights(path)[0] <= maxTotalDist]
+    if not belowMaxTot:
+        raise ValueError('No path below maxTotalDist threshold')
+    belowMaxOut = [path for path in belowMaxTot if digraph.getPathWeights(path)[1] <= maxDistOutdoors]
+    if not belowMaxOut:
+        raise ValueError('No path below maxDistOutdoors threshold')
+    best = belowMaxOut[0]
+    bestTotal, bestOut = digraph.getPathWeights(best)
+    for current in belowMaxOut[1:]:
+        currTotal, currOut = digraph.getPathWeights(current)
+        if currTotal < bestTotal:
+            best = current
+    return [str(node) for node in best]    
+        
 
 #
 # Problem 4: Finding the Shorest Path using Optimized Search Method
@@ -149,13 +155,13 @@ def directedDFS(digraph, start, end, maxTotalDist, maxDistOutdoors):
         If there exists no path that satisfies maxTotalDist and
         maxDistOutdoors constraints, then raises a ValueError.
     """
-    #TODO
+    # TODO
     pass
 
 # Uncomment below when ready to test
 #### NOTE! These tests may take a few minutes to run!! ####
 if __name__ == '__main__':
-    #Test cases
+    # Test cases
     mitMap = load_map("mit_map.txt")
     print isinstance(mitMap, Digraph)
     print isinstance(mitMap, WeightedDigraph)
@@ -163,30 +169,32 @@ if __name__ == '__main__':
     print 'edges', mitMap.edges
 
 
-#     LARGE_DIST = 1000000
+    LARGE_DIST = 1000000
 
 #     Test case 1
-#     print "---------------"
-#     print "Test case 1:"
-#     print "Find the shortest-path from Building 32 to 56"
-#     expectedPath1 = ['32', '56']
-#     brutePath1 = bruteForceSearch(mitMap, '32', '56', LARGE_DIST, LARGE_DIST)
+    print "---------------"
+    print "Test case 1:"
+    print "Find the shortest-path from Building 32 to 56"
+    expectedPath1 = ['32', '56']
+    brutePath1 = bruteForceSearch(mitMap, '32', '56', LARGE_DIST, LARGE_DIST)
 #     dfsPath1 = directedDFS(mitMap, '32', '56', LARGE_DIST, LARGE_DIST)
-#     print "Expected: ", expectedPath1
-#     print "Brute-force: ", brutePath1
+    print "Expected: ", expectedPath1
+    print "Brute-force: ", brutePath1
 #     print "DFS: ", dfsPath1
+    print "Correct? BFS: {0}".format(expectedPath1 == brutePath1)
 #     print "Correct? BFS: {0}; DFS: {1}".format(expectedPath1 == brutePath1, expectedPath1 == dfsPath1)
 
 #     Test case 2
-#     print "---------------"
-#     print "Test case 2:"
-#     print "Find the shortest-path from Building 32 to 56 without going outdoors"
-#     expectedPath2 = ['32', '36', '26', '16', '56']
-#     brutePath2 = bruteForceSearch(mitMap, '32', '56', LARGE_DIST, 0)
+    print "---------------"
+    print "Test case 2:"
+    print "Find the shortest-path from Building 32 to 56 without going outdoors"
+    expectedPath2 = ['32', '36', '26', '16', '56']
+    brutePath2 = bruteForceSearch(mitMap, '32', '56', LARGE_DIST, 0)
 #     dfsPath2 = directedDFS(mitMap, '32', '56', LARGE_DIST, 0)
-#     print "Expected: ", expectedPath2
-#     print "Brute-force: ", brutePath2
+    print "Expected: ", expectedPath2
+    print "Brute-force: ", brutePath2
 #     print "DFS: ", dfsPath2
+    print "Correct? BFS: {0}".format(expectedPath2 == brutePath2)
 #     print "Correct? BFS: {0}; DFS: {1}".format(expectedPath2 == brutePath2, expectedPath2 == dfsPath2)
 
 #     Test case 3

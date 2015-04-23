@@ -20,6 +20,8 @@ class Node(object):
     def __hash__(self):
         # Override the default hash method
         # Think: Why would we want to do this?
+        # Sameer: because we are using strings and
+        # not node objects as parameters in ps5
         return self.name.__hash__()
 
 class Edge(object):
@@ -136,25 +138,25 @@ class WeightedDigraph(Digraph):
         for i in range(len(path) - 1):
             # We call the function rather than access the dict for weights
             # because we can to take advantage of the error checking
-            edgeTotal, edgeOutSide = self.getEdgeWeights(path[i], path[i+1])
+            edgeTotal, edgeOutSide = self.getEdgeWeights(path[i], path[i + 1])
             pathTotal = pathTotal + edgeTotal
             pathOutside = pathOutside + edgeOutSide
         return pathTotal, pathOutside
         
-    def DFSAllPaths(self, start, end, path = []):
-        #assumes graph is a Digraph
-        #assumes start and end are nodes in graph
+    def DFSAllPaths(self, start, end, path=[]):
+        # assumes graph is a Digraph
+        # assumes start and end are nodes in graph
         path = path + [start]
         if start == end:
-            return [path] # recursion stop when you reach destination
+            return [path]  # recursion stop when you reach destination
         allPaths = []
         for node in self.childrenOf(start):
-            if node not in path: #avoid cycles
-                newPaths = self.DFSAllPaths(self,node,end,path)
+            if node not in path:  # avoid cycles
+                newPaths = self.DFSAllPaths(node, end, path)
                 # if child returns paths, return them to the caller
                 for newPath in newPaths:
                     allPaths.append(newPath)
-        return allPaths # if no path exists, this is an empty list
+        return allPaths  # if no path exists, this is an empty list
 
     def __str__(self):
         '''
@@ -191,6 +193,7 @@ def test():
     print g.childrenOf(na)    
     print g.weights
     print 'na, nb = ', g.getEdgeWeights(na, nb)
+    print g.DFSAllPaths(na, nc)
     
 if __name__ == '__main__':   
     test() 
