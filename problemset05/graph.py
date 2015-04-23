@@ -158,24 +158,25 @@ class WeightedDigraph(Digraph):
                     allPaths.append(newPath)
         return allPaths  # if no path exists, this is an empty list
 
-    def DFSShortestDirected(self, start, end, maxTotalDist, maxDistOutdoors, path = [], shortest = None):
-        #assumes graph is a Digraph
-        #assumes start and end are nodes in graph
+    def DFSShortestDirected(self, start, end, maxTotalDist, maxDistOutdoors, path=[], shortest=None):
+        # assumes graph is a Digraph
+        # assumes start and end are nodes in graph
         path = path + [start]
-        #print 'Current path', path
         # If the path has one node, the weights we get back are (0.0, 0.0)
         pathTotal, pathOutside = self.getPathWeights(path)
-        #print 'maxTotalDist = ', maxTotalDist, ', maxDistOutdoors = ', maxDistOutdoors, ', pathTotal = ', pathTotal, ', = pathOutside', pathOutside
+        # print 'maxTotalDist = ', maxTotalDist, ', maxDistOutdoors = ', maxDistOutdoors, ', pathTotal = ', pathTotal, ', = pathOutside', pathOutside
         if pathTotal > maxTotalDist:
             return None
         if pathOutside > maxDistOutdoors:
             return None
-        if start == end:
+        # It is important to consider the path valid if it falls below the thresholds above
+        if start == end and (shortest == None or pathTotal < self.getPathWeights(shortest)[0]):
+            #print 'Found path = ', path, ' weights = ', self.getPathWeights(path)
             return path
         for node in self.childrenOf(start):
-            if node not in path: #avoid cycles
+            if node not in path:  # avoid cycles
                 if shortest == None or pathTotal < self.getPathWeights(shortest)[0]:
-                    newPath = self.DFSShortestDirected(node, end, maxTotalDist, maxDistOutdoors, path,shortest)
+                    newPath = self.DFSShortestDirected(node, end, maxTotalDist, maxDistOutdoors, path, shortest)
                     if newPath != None:
                         shortest = newPath
         return shortest
@@ -191,7 +192,7 @@ class WeightedDigraph(Digraph):
         return res[:-1]
         
 
-def test():
+def test0():
     na = Node('a')
     nb = Node('b')
     nc = Node('c')
@@ -221,9 +222,102 @@ def test():
     print
     print g.DFSShortestDirected(na, nc, 1000.0, 20.0)
     print
+
+def test1():
+    print 'test1'
+    n1 = Node('1')
+    n2 = Node('2')
+    n3 = Node('3')
+    n4 = Node('4')
+    n5 = Node('5')
+    
+    e1 = WeightedEdge(n1, n2, 5, 2)
+    e2 = WeightedEdge(n3, n5, 6, 3)
+    e3 = WeightedEdge(n2, n3, 20, 10)
+    e4 = WeightedEdge(n2, n4, 10, 5)
+    e5 = WeightedEdge(n4, n3, 2, 1)
+    e6 = WeightedEdge(n4, n5, 20, 10)
+    
+    g = WeightedDigraph()
+    g.addNode(n1)
+    g.addNode(n2)
+    g.addNode(n3)
+    g.addNode(n4)
+    g.addNode(n5)
+    g.addEdge(e1)
+    g.addEdge(e2)
+    g.addEdge(e3)
+    g.addEdge(e4)
+    g.addEdge(e5)
+    g.addEdge(e6)
+
+    print "Expected: ['1', '2', '4', '3']"
+    print "My output: ", g.DFSShortestDirected(n1, n3, 100, 100)
+    print
+    print "Expected: ['1', '2', '4', '3', '5']"
+    print "My output: ", g.DFSShortestDirected(n1, n5, 100, 100)
+    print
+    print "Expected: ['1', '2', '4', '3']"
+    print "My output: ", g.DFSShortestDirected(n1, n3, 17, 8)
+    print
+    print "Expected: ['1', '2', '4', '3', '5']"
+    print "My output: ", g.DFSShortestDirected(n1, n5, 23, 11)
+    print
+    print "Expected: ['4', '3', '5']"
+    print "My output: ", g.DFSShortestDirected(n4, n5, 21, 11)
+    print
+    
+def test2():
+    print 'test2'
+    n1 = Node('1')
+    n2 = Node('2')
+    n3 = Node('3')
+    n4 = Node('4')
+    n5 = Node('5')
+    
+    e1 = WeightedEdge(n1, n2, 5, 2)
+    e2 = WeightedEdge(n3, n5, 5, 1)
+    e3 = WeightedEdge(n2, n3, 20, 10)
+    e4 = WeightedEdge(n2, n4, 10, 5)
+    e5 = WeightedEdge(n4, n3, 5, 1)
+    e6 = WeightedEdge(n4, n5, 20, 1)
+    
+    g = WeightedDigraph()
+    g.addNode(n1)
+    g.addNode(n2)
+    g.addNode(n3)
+    g.addNode(n4)
+    g.addNode(n5)
+    g.addEdge(e1)
+    g.addEdge(e2)
+    g.addEdge(e3)
+    g.addEdge(e4)
+    g.addEdge(e5)
+    g.addEdge(e6)
+
+    result = g.DFSShortestDirected(n1, n5, 100, 100)
+    print "Expected: ['1', '2', '4', '5']"
+    print "My output: ", result
+    print
+    print "Expected: ['1', '2', '4', '3']"
+    print "My output: ", g.DFSShortestDirected(n1, n3, 100, 100)
+    print
+    print "Expected: ['1', '2', '4', '5']"
+    print "My output: ", g.DFSShortestDirected(n1, n5, 35, 8)
+    print
+    print "Expected: ['4', '5']"
+    print "My output: ", g.DFSShortestDirected(n4, n5, 21, 1)
+    print
+    print "Expected: ['1', '2', '4', '3', '5']"
+    print "My output: ", g.DFSShortestDirected(n1, n5, 35, 9)
+    print
+    print "Expected: ['4', '3', '5']"
+    print "My output: ", g.DFSShortestDirected(n4, n5, 21, 11)
+    print
     
 if __name__ == '__main__':   
-    test() 
+    test1()
+    test2() 
     
     
     
