@@ -1,6 +1,5 @@
 #Code shared across examples
 import pylab, string
-from matplotlib.cbook import Null
 
 def stdDev(X):
     mean = sum(X)/float(len(X))
