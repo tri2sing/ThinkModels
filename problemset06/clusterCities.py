@@ -41,7 +41,7 @@ class Point(object):
         return self.name        
     
 class Cluster(object):
-    """ A Cluster is defines as a set of elements, all having 
+    """ A Cluster is defined as a set of elements, all having 
     a particular type """
     def __init__(self, points, pointType):
         """ Elements of a cluster are saved in self.points
@@ -54,9 +54,11 @@ class Cluster(object):
         self and the other point is from other. Uses the 
         Euclidean dist between 2 points, defined in Point."""
         singleDist = float('inf')
+        #print 'Clusters to check: Self = ', self.toStr(), ' Other = ', other.toStr()
         for p1 in self.points:
             for p2 in other.points:
                 currDist = p1.distance(p2)
+                #print 'Distance between', p1, p2, ' = ', currDist
                 if currDist < singleDist:
                     singleDist = currDist
         return singleDist
@@ -130,24 +132,48 @@ class ClusterSet(object):
         self.members.append(c)
     def getClusters(self):
         return self.members[:]
+
     def mergeClusters(self, c1, c2):
         """ Assumes clusters c1 and c2 are in self
         Adds to self a cluster containing the union of c1 and c2
         and removes c1 and c2 from self """
-        # TO DO
-        pass
+        if c1 not in self.members:
+            raise ValueError
+        if c2 not in self.members:
+            raise ValueError
+        if type(c1) is not type(c2):
+            raise ValueError 
+        c1members = set(c1.members())
+        c2members = set(c2.members())
+        self.members.remove(c1)
+        self.members.remove(c2)
+        self.add(Cluster(list(c1members | c2members), type(c1)))
+        
     def findClosest(self, linkage):
         """ Returns a tuple containing the two most similar 
         clusters in self
         Closest defined using the metric linkage """
-        # TO DO
-        pass
+        N = len(self.members) # Number of clusters
+        result = () # empty tuple
+        minDist = float('inf')
+        for i in range(N - 1):
+            for j in range(i+1, N, 1):
+                memi = self.members[i]
+                memj = self.members[j]
+                curDist = linkage(memi, memj)
+                if curDist < minDist:
+                    minDist = curDist
+                    result = memi, memj
+        return result
+         
     def mergeOne(self, linkage):
         """ Merges the two most simililar clusters in self
         Similar defined using the metric linkage
         Returns the clusters that were merged """
-        # TO DO
-        pass
+        c1, c2 = self.findClosest(linkage)
+        self.mergeClusters(c1, c2)
+        return c1, c2
+    
     def numClusters(self):
         return len(self.members)
     def toStr(self):
@@ -188,6 +214,7 @@ def readCityData(fName, scale = False):
     #Continue processing lines in file, starting after comments
     for line in dataFile:
         dataLine = string.split(line[:-1], ',') #remove newline; then split
+        #print dataLine
         cityNames.append(dataLine[0])
         for i in range(numFeatures):
             featureVals[i].append(float(dataLine[i+1]))
@@ -219,8 +246,10 @@ def hCluster(points, linkage, numClusters, printHistory):
     for p in points:
         cS.add(Cluster([p], City))
     history = []
+    #print 'Original CS = ', cS.toStr()
     while cS.numClusters() > numClusters:
         merged = cS.mergeOne(linkage)
+        #print 'After one merge ', cS.toStr() 
         history.append(merged)
     if printHistory:
         print ''
@@ -245,6 +274,15 @@ def test():
     #hCluster(points, Cluster.averageLinkageDist, 10, False)
     #hCluster(points, Cluster.singleLinkageDist, 10, False)
 
+def test2():
+    points1 = buildCityPoints('test.txt', False)
+    #points2 = buildCityPoints('test.txt', False)
+    #points3 = buildCityPoints('test.txt', False)
+    hCluster(points1, Cluster.singleLinkageDist, 3, False)
+    hCluster(points1, Cluster.maxLinkageDist, 3, False)
+    hCluster(points1, Cluster.averageLinkageDist, 3, False)
+
 #test()
+test2()
 
 
