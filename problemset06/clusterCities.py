@@ -266,22 +266,23 @@ def hCluster(points, linkage, numClusters, printHistory):
     return cS
 
 def test():
-    points = buildCityPoints('cityTemps.txt', False)
-    hCluster(points, Cluster.singleLinkageDist, 10, False)
-    #points = buildCityPoints('cityTemps.txt', True)
+    points = buildCityPoints('cityTemps.txt', True)
+    points1 = buildCityPoints('cityTemps.txt', False)
+    hCluster(points, Cluster.singleLinkageDist, 5, False)
+    hCluster(points1, Cluster.singleLinkageDist, 5, False)
+    #hCluster(points, Cluster.singleLinkageDist, 10, False)
+    #hCluster(points, Cluster.singleLinkageDist, 15, False)
+    #hCluster(points, Cluster.singleLinkageDist, 20, False)
     #hCluster(points, Cluster.maxLinkageDist, 10, False)
     #hCluster(points, Cluster.averageLinkageDist, 10, False)
-    #hCluster(points, Cluster.singleLinkageDist, 10, False)
 
 def test2():
     points1 = buildCityPoints('test.txt', False)
-    #points2 = buildCityPoints('test.txt', False)
-    #points3 = buildCityPoints('test.txt', False)
     hCluster(points1, Cluster.singleLinkageDist, 3, False)
     hCluster(points1, Cluster.maxLinkageDist, 3, False)
     hCluster(points1, Cluster.averageLinkageDist, 3, False)
 
-#test()
-test2()
+test()
+#test2()
 
 
